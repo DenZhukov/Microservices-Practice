@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+    resource-service-postgres:
+      image: postgres
+      ports:
+      - 5432:5432
+      environment:
+        POSTGRES_USER: denis
+        POSTGRES_PASSWORD: denis
+        POSTGRES_DB: customer_service

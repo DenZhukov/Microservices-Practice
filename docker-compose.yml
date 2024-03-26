@@ -1,0 +1,93 @@
+version: "3.9"
+
+networks:
+  my-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+          gateway: 172.21.0.1
+
+services:
+  registrydiscovery:
+    build:
+      context: ./registrydiscovery
+    container_name: registrydiscovery
+    ports:
+      - "8761:8761"
+    networks:
+      - my-network
+
+  resource-service:
+    build:
+      context: ./resource-service
+    container_name: resource-service
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./resource-service/.env
+    depends_on:
+      - resource-service-postgres
+      - registrydiscovery
+    networks:
+      - my-network
+
+  song-service-1:
+    build:
+      context: ./song-service
+    container_name: song-service-1
+    ports:
+      - "8090:8090"
+    env_file:
+      - ./song-service/.env
+    depends_on:
+      - song-service-postgres
+      - registrydiscovery
+    networks:
+      - my-network
+
+  song-service-2:
+    build:
+      context: ./song-service
+    container_name: song-service-2
+    ports:
+      - "8091:8091"
+    env_file:
+      - ./song-service/.env
+    depends_on:
+      - song-service-postgres
+      - registrydiscovery
+    networks:
+      - my-network
+
+  resource-service-postgres:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: denis
+      POSTGRES_PASSWORD: denis
+      POSTGRES_DB: customer_service
+    volumes:
+      - ./resource-service/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    restart: always
+    depends_on:
+      - registrydiscovery
+    networks:
+      - my-network
+
+  song-service-postgres:
+    image: postgres:alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: denis
+      POSTGRES_PASSWORD: denis
+      POSTGRES_DB: song_service
+    volumes:
+      - ./song-service/initdb:/docker-entrypoint-initdb.d
+    restart: always
+    depends_on:
+      - registrydiscovery
+    networks:
+      - my-network

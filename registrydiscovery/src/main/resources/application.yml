@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: registrydiscovery
+
+server:
+  port: 8761
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: true
+    service-url:
+      defaultZone: http://registrydiscovery:8761/eureka
+  instance:
+    hostname: registrydiscovery
+
+  logging:
+    level:
+      com:
+        netflix:
+          discovery: off
+          eureka: off

@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: resource-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/customer_service
+    username: denis
+    password: denis
+    driver-class-name: org.postgresql.Driver
+jpa:
+  database-platform: org.hibernate.dialect.PostgreSQL82Dialect
+  generate-ddl: true
+  hibernate:
+    ddl-auto: update
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://registrydiscovery:8761/eureka
+
+logging:
+  level:
+    org:
+      springframework: DEBUG
